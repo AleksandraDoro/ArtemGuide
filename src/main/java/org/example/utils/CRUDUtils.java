@@ -16,34 +16,36 @@ public class CRUDUtils {
     private final String GET_STUDENTS = "SELECT * FROM test_table";
     private final String UPDATE_STUDENTS = "UPDATE test_table set name = ? where id = ?";
     private final String DELETE_STUDENT = "Delete From test_table WHERE name = ?";
+    private final String ORDER_STUDENT = "SELECT * FROM test_table ORDER BY id";
 
     public List<Student> addStudent(String id, String name) {
         List<Student> listStudent = null;
-        try(Connection conn = new DBConnection().getConnection();
-        PreparedStatement preparedStatement = conn.prepareStatement(ADD_STUDENT)) {
-        preparedStatement.setString(1, id);
-        preparedStatement.setString(2, name);
-        preparedStatement.executeUpdate();
-        //conn.commit(); коммит уже включен по дефолту
-        listStudent = getStudents();
-        } catch(SQLException e) {
+        try (Connection conn = new DBConnection().getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(ADD_STUDENT)) {
+            preparedStatement.setString(1, id);
+            preparedStatement.setString(2, name);
+            preparedStatement.executeUpdate();
+            //conn.commit(); коммит уже включен по дефолту
+            listStudent = getStudents();
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
         return listStudent;
     }
+
     public List<Student> getStudents() {
         List<Student> listStudent = new ArrayList<>();
-        try(Connection conn = new DBConnection().getConnection();
-            PreparedStatement preparedStatement = conn.prepareStatement(GET_STUDENTS)) {
+        try (Connection conn = new DBConnection().getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(GET_STUDENTS)) {
             ResultSet resultSet = preparedStatement.executeQuery();
-                while(resultSet.next()) {
-                    String id = resultSet.getString("id");
-                    String name = resultSet.getString("name");
-                    listStudent.add(new Student(id, name));
-                }
+            while (resultSet.next()) {
+                String id = resultSet.getString("id");
+                String name = resultSet.getString("name");
+                listStudent.add(new Student(id, name));
+            }
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return listStudent;
@@ -51,18 +53,19 @@ public class CRUDUtils {
 
     public List<Student> updateStudents(String id, String name) {
         List<Student> listStudent = new ArrayList<>();
-        try(Connection conn = new DBConnection().getConnection();
-            PreparedStatement preparedStatement = conn.prepareStatement(UPDATE_STUDENTS)) {
+        try (Connection conn = new DBConnection().getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(UPDATE_STUDENTS)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, id);
             preparedStatement.executeUpdate();
             //conn.commit(); коммит уже включен по дефолту
             listStudent = getStudents();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return listStudent;
     }
+
     public List<Student> deleteStudent(String studentName) {
         List<Student> listStudent = new ArrayList<>();
         try (Connection conn = new DBConnection().getConnection();
@@ -76,4 +79,21 @@ public class CRUDUtils {
         }
         return listStudent;
     }
-}
+
+    public List<Student> orderStudent() {
+        List<Student> listStudent = new ArrayList<>();
+        try (Connection conn = new DBConnection().getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(ORDER_STUDENT)) {
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    String id = resultSet.getString("id");
+                    String name = resultSet.getString("name");
+                    listStudent.add(new Student(id, name));
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return listStudent;
+        }
+
+    }
