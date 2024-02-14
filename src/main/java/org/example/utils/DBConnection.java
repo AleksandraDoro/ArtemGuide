@@ -16,7 +16,7 @@ public class DBConnection {
         try {
          conn = DriverManager.getConnection("jdbc:postgresql://" + host + ":" + port + "/"+ databaseName,
                  userName, password);
-            System.out.println("Connection was successful");
+            System.out.println("I'M IN");
             }catch (Exception e) {
             e.printStackTrace();
         }
